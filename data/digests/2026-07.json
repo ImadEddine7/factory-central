@@ -1,0 +1,295 @@
+{
+  "meta": {
+    "period": "2026-07",
+    "title": "Data Factory \u2014 Delivery Digest",
+    "subtitle": "Juillet 2026",
+    "publishedAt": "2026-08-02T10:00:00Z",
+    "author": "",
+    "currency": "EUR",
+    "unit": "k",
+    "status": "published"
+  },
+  "projects": [
+    {
+      "id": "prj-001",
+      "name": "Procurement Analytics",
+      "active": true,
+      "revenue": 420.5
+    },
+    {
+      "id": "prj-002",
+      "name": "Energy Trading Platform",
+      "active": true,
+      "revenue": 310.0
+    },
+    {
+      "id": "prj-003",
+      "name": "HR Data Lake",
+      "active": true,
+      "revenue": 180.0
+    },
+    {
+      "id": "prj-004",
+      "name": "Carbon Reporting",
+      "active": true,
+      "revenue": 95.0
+    },
+    {
+      "id": "prj-005",
+      "name": "Supply Chain Dashboard",
+      "active": true,
+      "revenue": 250.0
+    }
+  ],
+  "purchaseOrders": [
+    {
+      "projectId": "prj-001",
+      "label": "",
+      "poRequested": 500,
+      "delivered": 430,
+      "poReceived": 420
+    },
+    {
+      "projectId": "prj-002",
+      "label": "",
+      "poRequested": 350,
+      "delivered": 310,
+      "poReceived": 280
+    },
+    {
+      "projectId": "prj-003",
+      "label": "",
+      "poRequested": 200,
+      "delivered": 185,
+      "poReceived": 180
+    },
+    {
+      "projectId": "prj-004",
+      "label": "",
+      "poRequested": 100,
+      "delivered": 95,
+      "poReceived": 60
+    },
+    {
+      "projectId": "prj-005",
+      "label": "",
+      "poRequested": 280,
+      "delivered": 250,
+      "poReceived": 250
+    }
+  ],
+  "keyMessages": [
+    {
+      "id": "msg-1",
+      "order": 1,
+      "title": "Migration Databricks \u2014 phase 2 lanc\u00e9e",
+      "body": "Le kick-off de la phase 2 a eu lieu le 18 juillet. Les \u00e9quipes offshore et onshore sont mobilis\u00e9es pour une livraison pr\u00e9vue en **octobre 2026**.",
+      "tag": "Delivery",
+      "date": "2026-07-18"
+    },
+    {
+      "id": "msg-2",
+      "order": 2,
+      "title": "Nouveau contrat Supply Chain sign\u00e9",
+      "body": "Extension du p\u00e9rim\u00e8tre Supply Chain Dashboard avec un volet **pr\u00e9dictif**. Budget additionnel de 120 k\u20ac sur S2 2026.",
+      "tag": "Commercial",
+      "date": "2026-07-25"
+    },
+    {
+      "id": "msg-3",
+      "order": 3,
+      "title": "Risque PO Carbon Reporting",
+      "body": "Couverture PO \u00e0 **63%** \u2014 le PO compl\u00e9mentaire est en attente de signature c\u00f4t\u00e9 client. Relance effectu\u00e9e.",
+      "tag": "Alerte",
+      "date": "2026-07-30"
+    }
+  ],
+  "headcount": [
+    {
+      "month": "2026-07",
+      "offshore": 30,
+      "onshore": 15
+    },
+    {
+      "month": "2026-08",
+      "offshore": 32,
+      "onshore": 15
+    },
+    {
+      "month": "2026-09",
+      "offshore": 33,
+      "onshore": 16
+    },
+    {
+      "month": "2026-10",
+      "offshore": 35,
+      "onshore": 16
+    },
+    {
+      "month": "2026-11",
+      "offshore": 36,
+      "onshore": 17
+    },
+    {
+      "month": "2026-12",
+      "offshore": 38,
+      "onshore": 18
+    }
+  ],
+  "planning": {
+    "startMonth": "2026-01",
+    "endMonth": "2026-12",
+    "rows": [
+      {
+        "id": "row-1",
+        "label": "Procurement Analytics",
+        "type": "row",
+        "indent": 0,
+        "bars": [
+          {
+            "id": "bar-1",
+            "label": "Build",
+            "start": "2026-01",
+            "end": "2026-05",
+            "color": "#2F6F6B",
+            "progress": 100,
+            "style": "solid"
+          },
+          {
+            "id": "bar-2",
+            "label": "Run",
+            "start": "2026-06",
+            "end": "2026-12",
+            "color": "#4A5A8A",
+            "progress": 30,
+            "style": "solid"
+          }
+        ],
+        "milestones": [
+          {
+            "id": "ms-1",
+            "month": "2026-05",
+            "label": "Go-live",
+            "color": "#B4472F"
+          }
+        ]
+      },
+      {
+        "id": "row-2",
+        "label": "Energy Trading Platform",
+        "type": "row",
+        "indent": 0,
+        "bars": [
+          {
+            "id": "bar-3",
+            "label": "Phase 1",
+            "start": "2026-02",
+            "end": "2026-07",
+            "color": "#2F6F6B",
+            "progress": 85,
+            "style": "solid"
+          },
+          {
+            "id": "bar-4",
+            "label": "Phase 2",
+            "start": "2026-08",
+            "end": "2026-11",
+            "color": "#C08A2E",
+            "style": "hatched"
+          }
+        ],
+        "milestones": []
+      },
+      {
+        "id": "row-3",
+        "label": "HR Data Lake",
+        "type": "row",
+        "indent": 0,
+        "bars": [
+          {
+            "id": "bar-5",
+            "label": "Migration",
+            "start": "2026-03",
+            "end": "2026-09",
+            "color": "#6B7A5A",
+            "progress": 55,
+            "style": "solid"
+          }
+        ],
+        "milestones": [
+          {
+            "id": "ms-2",
+            "month": "2026-09",
+            "label": "MEP",
+            "color": "#B4472F"
+          }
+        ]
+      },
+      {
+        "id": "row-4",
+        "label": "Carbon Reporting",
+        "type": "row",
+        "indent": 0,
+        "bars": [
+          {
+            "id": "bar-6",
+            "label": "D\u00e9veloppement",
+            "start": "2026-04",
+            "end": "2026-08",
+            "color": "#4A5A8A",
+            "progress": 70,
+            "style": "solid"
+          }
+        ],
+        "milestones": []
+      },
+      {
+        "id": "row-5",
+        "label": "Supply Chain Dashboard",
+        "type": "row",
+        "indent": 0,
+        "bars": [
+          {
+            "id": "bar-7",
+            "label": "V1",
+            "start": "2026-01",
+            "end": "2026-04",
+            "color": "#2F6F6B",
+            "progress": 100,
+            "style": "solid"
+          },
+          {
+            "id": "bar-8",
+            "label": "V2 Pr\u00e9dictif",
+            "start": "2026-07",
+            "end": "2026-12",
+            "color": "#C08A2E",
+            "progress": 10,
+            "style": "solid"
+          }
+        ],
+        "milestones": [
+          {
+            "id": "ms-3",
+            "month": "2026-04",
+            "label": "V1 Live",
+            "color": "#2F6F6B"
+          }
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "coverageThresholds": {
+      "warning": 80,
+      "healthy": 95
+    },
+    "palette": [
+      "#2F6F6B",
+      "#B4472F",
+      "#4A5A8A",
+      "#C08A2E",
+      "#6B7A5A"
+    ]
+  }
+}
