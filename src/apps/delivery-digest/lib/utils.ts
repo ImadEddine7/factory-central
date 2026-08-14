@@ -1,4 +1,13 @@
 export function formatAmount(value: number, unit: string): string {
+  if (unit === 'k' && Math.abs(value) >= 1000) {
+    const mValue = value / 1000
+    const formatted = new Intl.NumberFormat('fr-FR', {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 2,
+    }).format(mValue)
+    return `${formatted} M€`
+  }
+
   const formatted = new Intl.NumberFormat('fr-FR', {
     minimumFractionDigits: unit === 'unit' ? 0 : 1,
     maximumFractionDigits: unit === 'unit' ? 0 : 1,

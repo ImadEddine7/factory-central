@@ -26,8 +26,8 @@ export function Headcount({ digest }: { digest: Digest }) {
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate">Effectifs</h2>
       <div className="mb-4 flex flex-wrap items-baseline gap-4">
         <div>
-          <span className="text-3xl font-bold text-ink">{lastTotal}</span>
-          <span className="ml-1 text-xs text-slate">pers.</span>
+          <span className="text-2xl font-bold text-ink">{lastTotal}</span>
+          <span className="ml-1 text-xs text-slate">FTEs</span>
         </div>
         <div className="text-xs">
           <span className="font-semibold text-gold">{lastEntry.offshore} offshore</span>

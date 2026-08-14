@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useDigest } from '@digest/lib/context'
 import { HeaderStrip } from '@digest/blocks/HeaderStrip'
+import { Pipeline } from '@digest/blocks/Pipeline'
 import { Revenue } from '@digest/blocks/Revenue'
 import { PoCoverage } from '@digest/blocks/PoCoverage'
 import { KeyMessages } from '@digest/blocks/KeyMessages'
@@ -28,15 +29,18 @@ export function DigestPage() {
         )}
       </div>
       <div className="mb-10 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
-        <HeaderStrip digest={digest} />
+        <div className="space-y-4">
+          <HeaderStrip digest={digest} />
+          <Pipeline digest={digest} />
+        </div>
         <div className="section-card">
           <Headcount digest={digest} />
         </div>
       </div>
-      <Revenue digest={digest} />
-      <PoCoverage digest={digest} />
       <KeyMessages digest={digest} />
       <Planning digest={digest} />
+      <Revenue digest={digest} />
+      <PoCoverage digest={digest} />
     </div>
   )
 }

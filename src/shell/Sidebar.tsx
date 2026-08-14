@@ -61,22 +61,65 @@ function SidebarContent() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate/60">
-          Services
-        </p>
-        {apps.map(app => (
-          <NavLink
-            key={app.id}
-            to={app.basePath}
-            className={({ isActive }) => cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
-              isActive ? 'bg-accent/10 text-accent' : 'text-slate hover:text-ink hover:bg-mist'
-            )}
-          >
-            <app.icon className="h-5 w-5" />
-            {app.label}
-          </NavLink>
-        ))}
+        {(() => {
+          const ungrouped = apps.filter(a => !a.group)
+          const groups = [...new Set(apps.filter(a => a.group).map(a => a.group!))]
+
+          return (
+            <>
+              {ungrouped.filter(a => a.id !== 'about').map(app => (
+                <NavLink
+                  key={app.id}
+                  to={app.basePath}
+                  className={({ isActive }) => cn(
+                    'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                    isActive ? 'bg-accent/10 text-accent' : 'text-slate hover:text-ink hover:bg-mist'
+                  )}
+                >
+                  <app.icon className="h-5 w-5" />
+                  {app.label}
+                </NavLink>
+              ))}
+
+              {groups.map(group => (
+                <div key={group} className="mt-4">
+                  <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate/60">
+                    {group}
+                  </p>
+                  {apps.filter(a => a.group === group).map(app => (
+                    <NavLink
+                      key={app.id}
+                      to={app.basePath}
+                      className={({ isActive }) => cn(
+                        'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                        isActive ? 'bg-accent/10 text-accent' : 'text-slate hover:text-ink hover:bg-mist'
+                      )}
+                    >
+                      <app.icon className="h-5 w-5" />
+                      {app.label}
+                    </NavLink>
+                  ))}
+                </div>
+              ))}
+
+              <div className="mt-4 border-t border-slate/10 pt-4">
+                {ungrouped.filter(a => a.id === 'about').map(app => (
+                  <NavLink
+                    key={app.id}
+                    to={app.basePath}
+                    className={({ isActive }) => cn(
+                      'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
+                      isActive ? 'bg-accent/10 text-accent' : 'text-slate hover:text-ink hover:bg-mist'
+                    )}
+                  >
+                    <app.icon className="h-5 w-5" />
+                    {app.label}
+                  </NavLink>
+                ))}
+              </div>
+            </>
+          )
+        })()}
       </nav>
 
       <div className="border-t border-slate/10 px-5 py-4">

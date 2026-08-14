@@ -27,6 +27,7 @@ export const KeyMessageSchema = z.object({
   order: z.number(),
   title: z.string(),
   body: z.string(),
+  icon: z.string().optional(),
   tag: z.string().optional(),
   date: z.string().optional(),
   image: ImageSchema.optional(),

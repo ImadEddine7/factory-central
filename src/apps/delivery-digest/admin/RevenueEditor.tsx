@@ -59,18 +59,19 @@ export function RevenueEditor() {
         </button>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full max-w-lg text-sm">
+        <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate/10">
               <th className="pb-2 text-left text-xs font-medium text-slate">Projet</th>
+              <th className="pb-2 text-left text-xs font-medium text-slate">Programme</th>
               <th className="pb-2 text-right text-xs font-medium text-slate">Montant ({digest.meta.unit}€)</th>
-              <th className="pb-2 text-xs"></th>
+              <th className="pb-2 w-8"></th>
             </tr>
           </thead>
           <tbody>
             {projects.map(p => (
               <tr key={p.id} className="border-b border-slate/5">
-                <td className="py-1.5">
+                <td className="py-1.5 pr-2">
                   <input
                     className="input-field w-full"
                     value={p.name}
@@ -78,7 +79,15 @@ export function RevenueEditor() {
                     placeholder="Nom du projet"
                   />
                 </td>
-                <td className="py-1.5">
+                <td className="py-1.5 pr-2">
+                  <input
+                    className="input-field w-full"
+                    value={p.program || ''}
+                    onChange={e => updateProject(p.id, 'program', e.target.value)}
+                    placeholder="Programme"
+                  />
+                </td>
+                <td className="py-1.5 pr-2 text-right">
                   <input
                     type="number"
                     className="input-field w-28 text-right font-mono"

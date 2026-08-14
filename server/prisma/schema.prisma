@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  VIEWER
+}
+
+enum DigestStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Digest {
+  id                 String       @id @default(cuid())
+  period             String       @unique
+  title              String       @default("Data Factory — Delivery Digest")
+  subtitle           String       @default("")
+  author             String       @default("")
+  currency           String       @default("EUR")
+  unit               String       @default("k")
+  status             DigestStatus @default(DRAFT)
+  publishedAt        DateTime?
+  planningStartMonth String       @default("")
+  planningEndMonth   String       @default("")
+  coverageWarning    Float        @default(80)
+  coverageHealthy    Float        @default(95)
+  palette            String[]     @default(["#2F6F6B", "#B4472F", "#4A5A8A", "#C08A2E", "#6B7A5A"])
+  createdBy          String?
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+
+  projects     Project[]
+  headcount    HeadcountEntry[]
+  keyMessages  KeyMessage[]
+  planningRows PlanningRow[]
+
+  @@map("digests")
+}
+
+model Project {
+  id       String  @id @default(cuid())
+  name     String
+  program  String?
+  active   Boolean @default(true)
+  revenue  Float   @default(0)
+  order    Int     @default(0)
+  digestId String
+
+  digest         Digest          @relation(fields: [digestId], references: [id], onDelete: Cascade)
+  purchaseOrders PurchaseOrder[]
+
+  @@map("projects")
+}
+
+model PurchaseOrder {
+  id          String @id @default(cuid())
+  label       String @default("")
+  poRequested Float  @default(0)
+  delivered   Float  @default(0)
+  poReceived  Float  @default(0)
+  order       Int    @default(0)
+  projectId   String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("purchase_orders")
+}
+
+model HeadcountEntry {
+  id       String @id @default(cuid())
+  month    String
+  offshore Float  @default(0)
+  onshore  Float  @default(0)
+  digestId String
+
+  digest Digest @relation(fields: [digestId], references: [id], onDelete: Cascade)
+
+  @@unique([digestId, month])
+  @@map("headcount_entries")
+}
+
+model KeyMessage {
+  id       String  @id @default(cuid())
+  order    Int     @default(0)
+  title    String
+  body     String  @default("")
+  icon     String?
+  tag      String?
+  date     String?
+  image    Json?
+  digestId String
+
+  digest Digest @relation(fields: [digestId], references: [id], onDelete: Cascade)
+
+  @@map("key_messages")
+}
+
+model PlanningRow {
+  id       String  @id @default(cuid())
+  label    String  @default("")
+  type     String  @default("row")
+  indent   Int     @default(0)
+  hidden   Boolean @default(false)
+  order    Int     @default(0)
+  digestId String
+
+  digest     Digest      @relation(fields: [digestId], references: [id], onDelete: Cascade)
+  bars       Bar[]
+  milestones Milestone[]
+
+  @@map("planning_rows")
+}
+
+model Bar {
+  id       String  @id @default(cuid())
+  label    String  @default("")
+  start    String
+  end      String
+  color    String  @default("#2F6F6B")
+  progress Float?
+  style    String  @default("solid")
+  order    Int     @default(0)
+  rowId    String
+
+  row PlanningRow @relation(fields: [rowId], references: [id], onDelete: Cascade)
+
+  @@map("bars")
+}
+
+model Milestone {
+  id    String @id @default(cuid())
+  month String
+  label String @default("")
+  color String @default("#B4472F")
+  rowId String
+
+  row PlanningRow @relation(fields: [rowId], references: [id], onDelete: Cascade)
+
+  @@map("milestones")
+}
+
+model Article {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  date      String
+  pinned    Boolean  @default(false)
+  createdBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("articles")
+}
+
+model Announcement {
+  id        String   @id @default("singleton")
+  text      String   @default("")
+  updatedAt DateTime @updatedAt
+
+  @@map("announcement")
+}
+
+model Asset {
+  id        String   @id @default(cuid())
+  filename  String
+  mimeType  String
+  path      String
+  period    String?
+  size      Int
+  createdAt DateTime @default(now())
+
+  @@map("assets")
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  title     String   @default("New conversation")
+  messages  Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("conversations")
+}
+
+enum ContextSource {
+  EMAIL
+  TEAMS
+  SHAREPOINT
+  OTHER
+}
+
+model BusinessContext {
+  id         String        @id @default(cuid())
+  source     ContextSource
+  subject    String
+  content    String
+  date       String?
+  externalId String?
+  createdBy  String?
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  @@unique([source, externalId])
+  @@map("business_context")
+}
+
+model MicrosoftToken {
+  id           String   @id @default("singleton")
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  account      String?
+  updatedAt    DateTime @updatedAt
+
+  @@map("microsoft_token")
+}
+
+model SyncConfig {
+  id        String   @id @default(cuid())
+  source    ContextSource
+  name      String
+  resourceId String
+  enabled   Boolean  @default(true)
+  lastSync  DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sync_configs")
+}

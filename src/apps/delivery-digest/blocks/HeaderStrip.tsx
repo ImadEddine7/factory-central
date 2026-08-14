@@ -26,7 +26,7 @@ export function HeaderStrip({ digest }: { digest: Digest }) {
       </div>
       <div className="kpi-chip">
         <span className="text-[11px] font-medium uppercase tracking-wider text-slate">Effectifs</span>
-        <span className="text-2xl font-bold text-ink">{lastTotal || '—'}</span>
+        <span className="text-2xl font-bold text-ink">{lastTotal || '—'}{lastTotal > 0 && <span className="ml-1 text-xs font-medium text-slate">FTEs</span>}</span>
       </div>
       <div className="kpi-chip">
         <span className="text-[11px] font-medium uppercase tracking-wider text-slate">Ratio offshore</span>

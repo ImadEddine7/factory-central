@@ -1,9 +1,8 @@
 import { t } from '@digest/i18n'
 import { useDigest } from '@digest/lib/context'
-import { downloadJson } from '@digest/lib/storage'
 
 export function PublishPanel() {
-  const { digest, updateDigest, saveToGitHub, saving, githubMode } = useDigest()
+  const { digest, updateDigest, save, saving } = useDigest()
   const isPublished = digest.meta.status === 'published'
 
   const publish = async () => {
@@ -15,16 +14,15 @@ export function PublishPanel() {
         publishedAt: new Date().toISOString(),
       },
     }))
-    if (githubMode) {
-      await saveToGitHub()
-    }
+    await save()
   }
 
-  const unpublish = () => {
+  const unpublish = async () => {
     updateDigest(d => ({
       ...d,
       meta: { ...d.meta, status: 'draft', publishedAt: undefined },
     }))
+    await save()
   }
 
   return (
@@ -56,15 +54,11 @@ export function PublishPanel() {
             {t.admin.unpublish}
           </button>
         )}
-        <button onClick={() => downloadJson(digest)} className="btn-secondary">
-          Télécharger JSON
-        </button>
       </div>
 
       <div className="text-sm text-slate">
         <p>Période : <strong>{digest.meta.period}</strong></p>
         <p>Titre : {digest.meta.subtitle}</p>
-        <p>Mode : {githubMode ? 'GitHub' : 'Local'}</p>
       </div>
     </div>
   )

@@ -1,10 +1,8 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 import type { Digest } from './schema'
-import { DigestSchema } from './schema'
-import { getStorage, isGitHubMode } from './storage'
+import { api } from '@shared/api/client'
 import { createEmptyDigest, currentPeriod } from './utils'
-
-const BASE = import.meta.env.BASE_URL
+import { useAuth } from '@shared/auth/AuthContext'
 
 interface DigestContextType {
   digest: Digest
@@ -15,29 +13,13 @@ interface DigestContextType {
   dirty: boolean
   saving: boolean
   lastSaved: Date | null
-  saveToGitHub: () => Promise<void>
+  save: () => Promise<void>
   loadPeriod: (p: string) => Promise<void>
   error: string | null
   clearError: () => void
-  githubMode: boolean
 }
 
 const DigestContext = createContext<DigestContextType | null>(null)
-
-const API_BASE = 'https://api.github.com/repos/ImadEddine7/delivery-digest/contents'
-
-async function fetchFromRepo(period: string): Promise<Digest | null> {
-  try {
-    const res = await fetch(`${API_BASE}/data/digests/${period}.json?ref=main`, {
-      headers: { Accept: 'application/vnd.github.raw' },
-    })
-    if (!res.ok) return null
-    const json = await res.json()
-    return DigestSchema.parse(json)
-  } catch {
-    return null
-  }
-}
 
 export function DigestProvider({ children }: { children: ReactNode }) {
   const [digest, setDigestRaw] = useState<Digest>(() => createEmptyDigest(currentPeriod()))
@@ -46,56 +28,31 @@ export function DigestProvider({ children }: { children: ReactNode }) {
   const [saving, setSaving] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const githubMode = isGitHubMode()
+  const { isAdmin } = useAuth()
 
   const setDigest = useCallback((d: Digest) => {
     setDigestRaw(d)
     setDirty(true)
-    localStorage.setItem(`delivery-digest:draft:${d.meta.period}`, JSON.stringify(d))
   }, [])
 
   const updateDigest = useCallback((fn: (d: Digest) => Digest) => {
     setDigestRaw(prev => {
       const next = fn(prev)
       setDirty(true)
-      localStorage.setItem(`delivery-digest:draft:${next.meta.period}`, JSON.stringify(next))
       return next
     })
   }, [])
 
   const loadPeriod = useCallback(async (p: string, fallback = true) => {
     try {
-      // 1. Check local draft first
-      const draft = localStorage.getItem(`delivery-digest:draft:${p}`)
-      if (draft) {
-        setDigestRaw(JSON.parse(draft))
-        setPeriodRaw(p)
-        setDirty(true)
-        return
-      }
-
-      // 2. If GitHub mode, use API
-      if (isGitHubMode()) {
-        const storage = getStorage()
-        const loaded = await storage.load(p)
-        if (loaded) {
-          setDigestRaw(loaded)
-          setPeriodRaw(p)
-          setDirty(false)
-          return
-        }
-      }
-
-      // 3. Fetch from GitHub raw (always up-to-date with main branch)
-      const fromRepo = await fetchFromRepo(p)
-      if (fromRepo) {
-        setDigestRaw(fromRepo)
+      const loaded = await api<Digest>(`/digests/${p}`).catch(() => null)
+      if (loaded) {
+        setDigestRaw(loaded)
         setPeriodRaw(p)
         setDirty(false)
         return
       }
 
-      // 4. Fallback: try previous month (only on initial load)
       if (fallback) {
         const [y, m] = p.split('-').map(Number)
         const pm = m === 1 ? 12 : m - 1
@@ -104,36 +61,33 @@ export function DigestProvider({ children }: { children: ReactNode }) {
         return loadPeriod(prev, false)
       }
 
-      // 5. Nothing found, create empty
       setDigestRaw(createEmptyDigest(p))
       setPeriodRaw(p)
       setDirty(false)
     } catch (e: any) {
-      if (e.message === 'TOKEN_INVALID') {
-        setError('TOKEN_INVALID')
-      } else {
-        setError(e.message)
-      }
+      setError(e.message)
     }
   }, [])
 
-  const saveToGitHub = useCallback(async () => {
+  const save = useCallback(async () => {
     setSaving(true)
     setError(null)
     try {
-      const storage = getStorage()
-      await storage.save(digest)
+      const { meta, ...data } = digest
+      const body = JSON.stringify({ meta, ...data })
+      try {
+        await api(`/digests/${digest.meta.period}`, { method: 'PUT', body })
+      } catch (e: any) {
+        if (e.status === 404) {
+          await api('/digests', { method: 'POST', body })
+        } else {
+          throw e
+        }
+      }
       setDirty(false)
       setLastSaved(new Date())
-      localStorage.removeItem(`delivery-digest:draft:${digest.meta.period}`)
     } catch (e: any) {
-      if (e.message === 'TOKEN_INVALID') {
-        setError('TOKEN_INVALID')
-      } else if (e.message === 'CONFLICT') {
-        setError('CONFLICT')
-      } else {
-        setError(e.message)
-      }
+      setError(e.message)
     } finally {
       setSaving(false)
     }
@@ -153,8 +107,8 @@ export function DigestProvider({ children }: { children: ReactNode }) {
   return (
     <DigestContext.Provider value={{
       digest, setDigest, updateDigest, period, setPeriod,
-      dirty, saving, lastSaved, saveToGitHub, loadPeriod,
-      error, clearError, githubMode,
+      dirty, saving, lastSaved, save, loadPeriod,
+      error, clearError,
     }}>
       {children}
     </DigestContext.Provider>

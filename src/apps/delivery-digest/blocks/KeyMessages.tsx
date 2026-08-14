@@ -19,36 +19,43 @@ export function KeyMessages({ digest }: { digest: Digest }) {
       <h2 className="mb-4 text-xl font-bold text-ink">{t.messages.title}</h2>
       <div className="space-y-6">
         {messages.map(msg => (
-          <article key={msg.id} className="rounded-lg border border-slate/10 p-5">
-            <div className="mb-2 flex items-start justify-between">
-              <h3 className="text-lg font-semibold text-ink">{msg.title}</h3>
-              <div className="flex gap-2">
-                {msg.tag && (
-                  <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
-                    {msg.tag}
-                  </span>
-                )}
-                {msg.date && (
-                  <span className="text-xs text-slate/60">
-                    {new Date(msg.date).toLocaleDateString('fr-FR')}
-                  </span>
-                )}
-              </div>
-            </div>
-            {msg.image && (
-              <div className={`mb-3 ${msg.image.layout === 'full' ? 'w-full' : msg.image.layout === 'left' ? 'float-left mr-4 w-2/5' : 'float-right ml-4 w-2/5'}`}>
-                <img
-                  src={msg.image.src}
-                  alt={msg.image.alt}
-                  className="rounded-md"
-                />
+          <article key={msg.id} className="flex gap-4 rounded-lg border border-slate/10 p-5">
+            {msg.icon && (
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-mist text-2xl">
+                {msg.icon}
               </div>
             )}
-            <div
-              className="text-sm leading-relaxed text-slate"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.body) }}
-            />
-            <div className="clear-both" />
+            <div className="flex-1">
+              <div className="mb-2 flex items-start justify-between">
+                <h3 className="text-lg font-semibold text-ink">{msg.title}</h3>
+                <div className="flex gap-2">
+                  {msg.tag && (
+                    <span className="rounded-full bg-accent/10 px-2.5 py-0.5 text-xs font-medium text-accent">
+                      {msg.tag}
+                    </span>
+                  )}
+                  {msg.date && (
+                    <span className="text-xs text-slate/60">
+                      {new Date(msg.date).toLocaleDateString('fr-FR')}
+                    </span>
+                  )}
+                </div>
+              </div>
+              {msg.image && (
+                <div className={`mb-3 ${msg.image.layout === 'full' ? 'w-full' : msg.image.layout === 'left' ? 'float-left mr-4 w-2/5' : 'float-right ml-4 w-2/5'}`}>
+                  <img
+                    src={msg.image.src}
+                    alt={msg.image.alt}
+                    className="rounded-md"
+                  />
+                </div>
+              )}
+              <div
+                className="text-sm leading-relaxed text-slate"
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.body) }}
+              />
+              <div className="clear-both" />
+            </div>
           </article>
         ))}
       </div>

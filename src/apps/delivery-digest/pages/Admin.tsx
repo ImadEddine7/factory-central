@@ -20,7 +20,7 @@ import { Headcount } from '@digest/blocks/Headcount'
 type Tab = 'revenue' | 'po' | 'headcount' | 'messages' | 'planning' | 'import' | 'settings' | 'publish'
 
 export function AdminPage() {
-  const { digest, period, setPeriod, dirty, saving, lastSaved, saveToGitHub, updateDigest, githubMode, error, clearError } = useDigest()
+  const { digest, period, setPeriod, dirty, saving, lastSaved, save, updateDigest, error, clearError } = useDigest()
   const [tab, setTab] = useState<Tab>('revenue')
   const [preview, setPreview] = useState(false)
 
@@ -104,15 +104,13 @@ export function AdminPage() {
           <button onClick={() => setPreview(true)} className="btn-secondary w-full text-sm">
             {t.admin.preview}
           </button>
-          {githubMode && (
-            <button
-              onClick={saveToGitHub}
-              disabled={saving || !dirty}
-              className="btn-primary w-full text-sm"
-            >
-              {saving ? t.admin.saving : t.admin.save}
-            </button>
-          )}
+          <button
+            onClick={save}
+            disabled={saving || !dirty}
+            className="btn-primary w-full text-sm"
+          >
+            {saving ? t.admin.saving : t.admin.save}
+          </button>
         </div>
 
         <div className="mt-3 text-xs text-slate">
@@ -139,7 +137,7 @@ export function AdminPage() {
           <div className="mb-4 flex items-center gap-3 rounded-lg border border-warning/30 bg-warning/5 px-4 py-3">
             <span className="text-sm text-warning font-medium">Modifications non enregistrées</span>
             <button
-              onClick={saveToGitHub}
+              onClick={save}
               disabled={saving}
               className="btn-primary ml-auto text-sm"
             >
@@ -156,13 +154,6 @@ export function AdminPage() {
           </div>
         )}
 
-        {!githubMode && dirty && (
-          <div className="mb-4 rounded-lg border border-danger/20 bg-danger/5 p-3 text-sm">
-            <span className="font-medium text-danger">
-              GitHub non configuré — allez dans Paramètres pour connecter votre repo.
-            </span>
-          </div>
-        )}
 
         {tab === 'revenue' && <RevenueEditor />}
         {tab === 'po' && <PoEditor />}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { t } from '@digest/i18n'
-import { getStorage } from '@digest/lib/storage'
+import { api } from '@shared/api/client'
 import type { DigestIndex } from '@digest/lib/schema'
 
 export function ArchivePage() {
@@ -9,7 +9,7 @@ export function ArchivePage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getStorage().listPeriods().then(idx => {
+    api<DigestIndex>('/digests').then(idx => {
       setIndex(idx)
       setLoading(false)
     }).catch(() => setLoading(false))
