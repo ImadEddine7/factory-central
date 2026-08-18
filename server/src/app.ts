@@ -7,7 +7,10 @@ import { errorHandler } from './middleware/errorHandler.js'
 
 const app = express()
 
-app.use(cors({ origin: config.CORS_ORIGIN, credentials: true }))
+app.use(cors({
+  origin: config.CORS_ORIGIN.split(',').map(s => s.trim()),
+  credentials: true,
+}))
 app.use(express.json({ limit: '10mb' }))
 app.use('/uploads', express.static(path.resolve(config.UPLOAD_DIR)))
 

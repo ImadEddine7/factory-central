@@ -6,6 +6,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3001),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
   UPLOAD_DIR: z.string().default('./uploads'),
+  NODE_ENV: z.string().default('development'),
 })
 
 export const config = envSchema.parse(process.env)
