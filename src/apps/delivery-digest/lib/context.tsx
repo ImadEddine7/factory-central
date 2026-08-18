@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import type { Digest } from './schema'
 import { api } from '@shared/api/client'
 import { createEmptyDigest, currentPeriod } from './utils'
+import { sampleDigest } from './sample-data'
 import { useAuth } from '@shared/auth/AuthContext'
 
 interface DigestContextType {
@@ -22,7 +23,7 @@ interface DigestContextType {
 const DigestContext = createContext<DigestContextType | null>(null)
 
 export function DigestProvider({ children }: { children: ReactNode }) {
-  const [digest, setDigestRaw] = useState<Digest>(() => createEmptyDigest(currentPeriod()))
+  const [digest, setDigestRaw] = useState<Digest>(() => sampleDigest)
   const [period, setPeriodRaw] = useState(currentPeriod())
   const [dirty, setDirty] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -61,7 +62,11 @@ export function DigestProvider({ children }: { children: ReactNode }) {
         return loadPeriod(prev, false)
       }
 
-      setDigestRaw(createEmptyDigest(p))
+      if (p === sampleDigest.meta.period) {
+        setDigestRaw(sampleDigest)
+      } else {
+        setDigestRaw(createEmptyDigest(p))
+      }
       setPeriodRaw(p)
       setDirty(false)
     } catch (e: any) {
