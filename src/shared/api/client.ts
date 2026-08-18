@@ -33,6 +33,20 @@ function localSet(path: string, data: any) {
   } catch { /* quota exceeded */ }
 }
 
+function fallbackOffline<T>(method: string, path: string, options: RequestInit): T {
+  if (method === 'GET') {
+    const cached = localGet<T>(path)
+    if (cached) return cached
+    throw new ApiError(0, 'offline')
+  }
+  if (options.body && typeof options.body === 'string') {
+    const data = JSON.parse(options.body)
+    localSet(path, data)
+    return data as T
+  }
+  return undefined as T
+}
+
 export async function api<T = any>(
   path: string,
   options: RequestInit = {}
@@ -73,6 +87,14 @@ export async function api<T = any>(
     })
 
     if (!res.ok) {
+      const contentType = res.headers.get('content-type') || ''
+      const isApiResponse = contentType.includes('application/json')
+
+      if (!isApiResponse) {
+        offlineMode = true
+        return fallbackOffline<T>(method, path, options)
+      }
+
       const body = await res.json().catch(() => ({}))
       throw new ApiError(res.status, body.error || res.statusText)
     }
@@ -84,16 +106,7 @@ export async function api<T = any>(
   } catch (e) {
     if (e instanceof ApiError) throw e
     offlineMode = true
-    if (method === 'GET') {
-      const cached = localGet<T>(path)
-      if (cached) return cached
-    }
-    if (method !== 'GET' && options.body) {
-      const data = JSON.parse(options.body as string)
-      localSet(path, data)
-      return data as T
-    }
-    throw new ApiError(0, 'offline')
+    return fallbackOffline<T>(method, path, options)
   }
 }
 
