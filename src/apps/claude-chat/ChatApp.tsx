@@ -31,6 +31,7 @@ interface ConversationSummary {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || ''
+const isStatic = !import.meta.env.VITE_API_URL && location.hostname.endsWith('github.io')
 
 export default function ChatApp() {
   const [conversations, setConversations] = useState<ConversationSummary[]>([])
@@ -48,6 +49,7 @@ export default function ChatApp() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const loadConversations = useCallback(async () => {
+    if (isStatic) return
     const res = await fetch(`${API_URL}/api/conversations`)
     if (res.ok) setConversations(await res.json())
   }, [])
@@ -129,6 +131,7 @@ export default function ChatApp() {
     e.preventDefault()
     if (!input.trim() && files.length === 0) return
     if (isStreaming) return
+    if (isStatic) return
 
     const userMessage: Message = {
       id: crypto.randomUUID(),
@@ -348,6 +351,12 @@ export default function ChatApp() {
                 <div className="mb-3 text-4xl opacity-40">🤖</div>
                 <h2 className="text-lg font-medium text-ink/70">Digital EM</h2>
                 <p className="mt-1 text-sm text-slate">Your delivery assistant. Ask about projects, revenue, headcount, planning.</p>
+                {isStatic && (
+                  <div className="mt-4 rounded-lg border border-warning/30 bg-warning/5 px-4 py-3">
+                    <p className="text-sm text-warning font-medium">Backend requis</p>
+                    <p className="mt-1 text-xs text-slate">Digital EM nécessite le serveur Express (API Claude + base de données). Déployez le backend sur Render pour activer cette fonctionnalité.</p>
+                  </div>
+                )}
               </div>
             </div>
           )}
