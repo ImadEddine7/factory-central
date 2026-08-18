@@ -1,6 +1,6 @@
 const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
-let offlineMode = false
+let offlineMode = !import.meta.env.VITE_API_URL && location.hostname.endsWith('github.io')
 
 function getToken(): string | null {
   return sessionStorage.getItem('factory-central:token')
