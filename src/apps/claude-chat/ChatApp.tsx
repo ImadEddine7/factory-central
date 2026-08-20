@@ -50,8 +50,10 @@ export default function ChatApp() {
 
   const loadConversations = useCallback(async () => {
     if (isStatic) return
-    const res = await fetch(`${API_URL}/api/conversations`)
-    if (res.ok) setConversations(await res.json())
+    try {
+      const res = await fetch(`${API_URL}/api/conversations`)
+      if (res.ok) setConversations(await res.json())
+    } catch { /* backend unreachable */ }
   }, [])
 
   useEffect(() => { loadConversations() }, [loadConversations])

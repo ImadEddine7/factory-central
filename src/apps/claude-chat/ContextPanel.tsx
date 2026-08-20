@@ -33,6 +33,7 @@ const SOURCES = [
 ] as const
 
 const API_URL = import.meta.env.VITE_API_URL || ''
+const isStatic = !import.meta.env.VITE_API_URL && location.hostname.endsWith('github.io')
 
 export function ContextPanel({ onClose }: { onClose: () => void }) {
   const [tab, setTab] = useState<'entries' | 'sources'>('sources')
@@ -54,14 +55,17 @@ export function ContextPanel({ onClose }: { onClose: () => void }) {
   const [selectedTeam, setSelectedTeam] = useState<any>(null)
 
   const loadAll = useCallback(async () => {
-    const [entriesRes, configsRes, statusRes] = await Promise.all([
-      fetch(`${API_URL}/api/business-context`),
-      fetch(`${API_URL}/api/microsoft/sync-configs`),
-      fetch(`${API_URL}/api/microsoft/status`),
-    ])
-    if (entriesRes.ok) setEntries(await entriesRes.json())
-    if (configsRes.ok) setSyncConfigs(await configsRes.json())
-    if (statusRes.ok) setMsStatus(await statusRes.json())
+    if (isStatic) return
+    try {
+      const [entriesRes, configsRes, statusRes] = await Promise.all([
+        fetch(`${API_URL}/api/business-context`),
+        fetch(`${API_URL}/api/microsoft/sync-configs`),
+        fetch(`${API_URL}/api/microsoft/status`),
+      ])
+      if (entriesRes.ok) setEntries(await entriesRes.json())
+      if (configsRes.ok) setSyncConfigs(await configsRes.json())
+      if (statusRes.ok) setMsStatus(await statusRes.json())
+    } catch { /* backend unreachable */ }
   }, [])
 
   useEffect(() => { loadAll() }, [loadAll])
